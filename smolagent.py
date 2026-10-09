@@ -6,7 +6,7 @@ import datetime
 # Local Ollama model
 
 model = LiteLLMModel(
-    model_id="ollama_chat/qwen2:7b",
+    model_id="ollama_chat/qwen2.5:7b",
     api_base="http://localhost:11434",
     num_ctx=8192,
 )

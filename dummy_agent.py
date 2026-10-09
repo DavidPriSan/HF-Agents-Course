@@ -7,7 +7,7 @@ client = OpenAI(base_url="http://localhost:11434/v1", api_key="ollama")
 # Simple chat
 
 """ output = client.chat.completions.create(
-    model="qwen2:7b",
+    model="qwen2.5:7b",
     messages=[{"role": "user", "content": "The capital of Spain is"}],
 )
 print(output.choices[0].message.content) """
@@ -59,7 +59,7 @@ messages = [
 ]
 
 output = client.chat.completions.create(
-    model="qwen2:7b",
+    model="qwen2.5:7b",
     messages=messages,
     max_tokens=150,
     stop=["Observation:"], # Stop before calling the function
@@ -81,7 +81,7 @@ messages=[
 ]
 
 output = client.chat.completions.create(
-    model="qwen2:7b",
+    model="qwen2.5:7b",
     messages=messages,
     stream=False,
     max_tokens=300,
