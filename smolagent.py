@@ -1,4 +1,4 @@
-from smolagents import CodeAgent, DuckDuckGoSearchTool, LiteLLMModel, VisitWebpageTool, tool
+from smolagents import CodeAgent, ToolCallingAgent, DuckDuckGoSearchTool, LiteLLMModel, VisitWebpageTool, tool
 import numpy as np
 import time
 import datetime
@@ -16,25 +16,39 @@ model = LiteLLMModel(
 # Playlist
 
 agent = CodeAgent(
-    tools=[DuckDuckGoSearchTool(), VisitWebpageTool(max_output_length=6000)],
+    tools=[VisitWebpageTool(max_output_length=12000)],
     model=model,
     code_block_tags="markdown",
-    max_steps=6,
+    max_steps=4,
 )
 
 playlist = agent.run(
     """
-    Create a playlist for a party at the Wayne's mansion with the top hits in Spain right now.
-    1. Use web_search to find a page with the current Spanish music chart.
-    2. Use visit_webpage on one of those URLs to read the actual song titles and artists.
-    3. Store exactly 10 real songs in a variable named playlist, using the
-       format "Song - Artist".
-    4. The last executed statement MUST be final_answer(playlist).
+    Create a playlist using this chart only:
+    https://chart.simpmusic.org/en/charts/es
 
-    Always write code. Never return the playlist as a bare variable and never
-    finish without calling final_answer() inside a code block.
+    Instructions:
+    1. Call visit_webpage exactly once with that URL.
+    2. Read the chart in its displayed order.
+    3. Each song title appears after "###"; the following line contains
+       its artist or artists.
+    4. Extract only the first 10 songs.
+    5. Create a Python list named playlist containing exactly 10 unique
+       strings formatted as "Song - Artist".
+    6. Do not use search results, image descriptions, chart movements,
+       invented songs, or any other website.
+    7. Verify that len(playlist) == 10.
+    8. Your final executed statement must be:
+       final_answer(playlist)
     """
 )
+
+if (
+    not isinstance(playlist, list)
+    or len(playlist) != 10
+    or not all(isinstance(song, str) and " - " in song for song in playlist)
+):
+    raise RuntimeError(f"Invalid playlist returned by agent: {playlist!r}")
 
 # Costumes (based on the playlist)
 
@@ -81,10 +95,9 @@ def suggest_menu(occasion: str) -> str:
     else:
         return "Custom menu for the butler."
 
-agent = CodeAgent(
+agent = ToolCallingAgent(
     tools=[suggest_menu],
     model=model,
-    code_block_tags="markdown",
     max_steps=3,
 )
 
@@ -123,10 +136,9 @@ def suggest_drinks(guest1: str, guest2: str | None = None, guest3: str | None = 
         suggestions.append(f"{guest}: {drink}")
     return "; ".join(suggestions)
 
-agent = CodeAgent(
+agent = ToolCallingAgent(
     tools=[suggest_drinks],
     model=model,
-    code_block_tags="markdown",
     max_steps=3,
 )
 
