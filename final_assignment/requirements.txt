@@ -1,7 +1,12 @@
 gradio
 requests
+huggingface_hub
 smolagents[litellm]
 pandas
 openpyxl
+pillow
 markdownify
 ddgs
+wikipedia-api
+youtube-transcript-api
+faster-whisper
