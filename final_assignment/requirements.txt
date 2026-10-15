@@ -1,0 +1,7 @@
+gradio
+requests
+smolagents[litellm]
+pandas
+openpyxl
+markdownify
+ddgs
